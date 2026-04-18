@@ -28,7 +28,7 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
 
     public function getId(): string
     {
-        return 'Enhanced-Server-Sorter';
+        return 'enhanced-server-sorter';
     }
 
     public function register(Panel $panel): void
@@ -58,18 +58,18 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
     private function makeManageFoldersAction(): Action
     {
         return Action::make('manageFolders')
-            ->label(fn () => trans('Enhanced-Server-Sorter::messages.manage_folders'))
+            ->label(fn () => trans('enhanced-server-sorter::messages.manage_folders'))
             ->icon('tabler-folders')
             ->modalWidth('2xl')
-            ->modalSubmitActionLabel(fn () => trans('Enhanced-Server-Sorter::messages.save'))
-            ->modalCancelActionLabel(fn () => trans('Enhanced-Server-Sorter::messages.cancel'))
+            ->modalSubmitActionLabel(fn () => trans('enhanced-server-sorter::messages.save'))
+            ->modalCancelActionLabel(fn () => trans('enhanced-server-sorter::messages.cancel'))
             ->visible(fn () => user() !== null)
             ->form(function () {
                 if (!Schema::hasTable('enhanced_server_folders')) {
                     return [
                         \Filament\Forms\Components\Placeholder::make('migration_required')
-                            ->label(fn () => trans('Enhanced-Server-Sorter::messages.migration_required'))
-                            ->content(fn () => trans('Enhanced-Server-Sorter::messages.migration_required_message'))
+                            ->label(fn () => trans('enhanced-server-sorter::messages.migration_required'))
+                            ->content(fn () => trans('enhanced-server-sorter::messages.migration_required_message'))
                     ];
                 }
 
@@ -77,17 +77,17 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
 
                 return [
                     Repeater::make('folders')
-                        ->label(fn () => trans('Enhanced-Server-Sorter::messages.folders'))
+                        ->label(fn () => trans('enhanced-server-sorter::messages.folders'))
                         ->default(fn () => $this->loadFolders())
                         ->live()
                         ->schema([
                             Hidden::make('id'),
                             TextInput::make('name')
-                                ->label(fn () => trans('Enhanced-Server-Sorter::messages.folder_name'))
+                                ->label(fn () => trans('enhanced-server-sorter::messages.folder_name'))
                                 ->required()
                                 ->maxLength(255),
                             Select::make('server_ids')
-                                ->label(fn () => trans('Enhanced-Server-Sorter::messages.servers'))
+                                ->label(fn () => trans('enhanced-server-sorter::messages.servers'))
                                 ->multiple()
                                 ->options($servers)
                                 ->searchable()
@@ -95,13 +95,13 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
                                 ->live()
                                 ->disabled(fn ($get) => $this->isFolderLocked($get('name')))
                                 ->helperText(fn ($get) => $this->isFolderLocked($get('name')) 
-                                    ? trans('Enhanced-Server-Sorter::messages.folder_locked') 
+                                    ? trans('enhanced-server-sorter::messages.folder_locked') 
                                     : null)
                                 ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
                         ])
                         ->collapsed()
                         ->reorderableWithButtons()
-                        ->addActionLabel(fn () => trans('Enhanced-Server-Sorter::messages.add_folder')),
+                        ->addActionLabel(fn () => trans('enhanced-server-sorter::messages.add_folder')),
                 ];
             })
             ->action(function (array $data) {
@@ -133,8 +133,8 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
                         ->join(', ');
                     
                     Notification::make()
-                        ->title(trans('Enhanced-Server-Sorter::messages.duplicate_servers'))
-                        ->body(trans('Enhanced-Server-Sorter::messages.duplicate_servers_message', ['servers' => $serverNames]))
+                        ->title(trans('enhanced-server-sorter::messages.duplicate_servers'))
+                        ->body(trans('enhanced-server-sorter::messages.duplicate_servers_message', ['servers' => $serverNames]))
                         ->danger()
                         ->send();
                     
@@ -144,7 +144,7 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
                 $this->persistFolders($folders, $user->id);
 
                 Notification::make()
-                    ->title(trans('Enhanced-Server-Sorter::messages.folders_updated'))
+                    ->title(trans('enhanced-server-sorter::messages.folders_updated'))
                     ->success()
                     ->send();
             });
@@ -316,33 +316,33 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
 
         return [
             Repeater::make('default_folders')
-                ->label(fn () => trans('Enhanced-Server-Sorter::messages.default_folders'))
-                ->helperText(fn () => trans('Enhanced-Server-Sorter::messages.default_folders_help'))
+                ->label(fn () => trans('enhanced-server-sorter::messages.default_folders'))
+                ->helperText(fn () => trans('enhanced-server-sorter::messages.default_folders_help'))
                 ->default(fn () => $this->loadDefaultFolders())
                 ->schema([
                     Hidden::make('id'),
                     TextInput::make('name')
-                        ->label(fn () => trans('Enhanced-Server-Sorter::messages.folder_name'))
+                        ->label(fn () => trans('enhanced-server-sorter::messages.folder_name'))
                         ->required()
                         ->maxLength(255),
                     Select::make('server_ids')
-                        ->label(fn () => trans('Enhanced-Server-Sorter::messages.servers'))
+                        ->label(fn () => trans('enhanced-server-sorter::messages.servers'))
                         ->multiple()
                         ->options($servers)
                         ->searchable()
                         ->preload()
-                        ->helperText(fn () => trans('Enhanced-Server-Sorter::messages.select_servers_help'))
+                        ->helperText(fn () => trans('enhanced-server-sorter::messages.select_servers_help'))
                         ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
                     \Filament\Forms\Components\Toggle::make('is_locked')
-                        ->label(fn () => trans('Enhanced-Server-Sorter::messages.lock_folder'))
-                        ->helperText(fn () => trans('Enhanced-Server-Sorter::messages.lock_folder_help'))
+                        ->label(fn () => trans('enhanced-server-sorter::messages.lock_folder'))
+                        ->helperText(fn () => trans('enhanced-server-sorter::messages.lock_folder_help'))
                         ->default(false)
                         ->inline(false),
                 ])
                 ->collapsible()
                 ->collapsed()
                 ->reorderableWithButtons()
-                ->addActionLabel(fn () => trans('Enhanced-Server-Sorter::messages.add_default_folder'))
+                ->addActionLabel(fn () => trans('enhanced-server-sorter::messages.add_default_folder'))
                 ->columns(2),
         ];
     }
@@ -412,12 +412,12 @@ class EnhancedServerSorterPlugin implements HasPluginSettings, Plugin
             $this->syncDefaultFoldersForAllUsers();
 
             Notification::make()
-                ->title(trans('Enhanced-Server-Sorter::messages.default_folders_saved'))
+                ->title(trans('enhanced-server-sorter::messages.default_folders_saved'))
                 ->success()
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
-                ->title(trans('Enhanced-Server-Sorter::messages.error_saving'))
+                ->title(trans('enhanced-server-sorter::messages.error_saving'))
                 ->body($e->getMessage())
                 ->danger()
                 ->send();

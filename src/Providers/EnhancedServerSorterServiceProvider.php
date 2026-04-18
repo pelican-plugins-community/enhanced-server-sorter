@@ -42,11 +42,11 @@ class EnhancedServerSorterServiceProvider extends ServiceProvider
                 ->groups([
                     (function (): Group {
                         $group = Group::make('enhancedFolderAssignment.folder.name')
-                            ->label(fn () => trans('Enhanced-Server-Sorter::messages.folders'))
+                            ->label(fn () => trans('enhanced-server-sorter::messages.folders'))
                             ->titlePrefixedWithLabel(false);
 
                         $group->getTitleFromRecordUsing(function (Server $server): string {
-                            return $server->enhancedFolderAssignment?->folder?->name ?? trans('Enhanced-Server-Sorter::messages.unassigned');
+                            return $server->enhancedFolderAssignment?->folder?->name ?? trans('enhanced-server-sorter::messages.unassigned');
                         })
                         ->collapsible();
 

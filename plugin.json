@@ -1,11 +1,12 @@
 {
-    "id": "Enhanced-Server-Sorter",
+    "id": "enhanced-server-sorter",
     "name": "Enhanced Server Sorter",
-    "author": "Olivier D.",
-    "version": "1.2.0",
+    "author": "Olivier D. & Yonn",
+    "version": "1.3.0",
     "description": "Organize servers into per-user folders and group them on the server list.",
     "category": "plugin",
-    "url": "https://github.com/Olivier-D-Pelican-Plugins/Enhanced-Server-Sorter",
+    "url": null,
+    "update_url": null,
     "namespace": "Olivier\\EnhancedServerSorter",
     "class": "EnhancedServerSorterPlugin",
     "panels": [
