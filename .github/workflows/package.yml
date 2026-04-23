@@ -1,0 +1,113 @@
+name: enhanced-server-sorter
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to package (for example v1.4.0)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    env:
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch || 'main' }}
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DEFAULT_BRANCH }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve release version
+        id: release
+        run: |
+          TAG="${{ github.event.release.tag_name || inputs.tag }}"
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag: $TAG"
+          echo "Resolved version: $VERSION"
+
+      - name: Update plugin.json and update.json
+        run: |
+          REPO="${{ github.repository }}"
+          TAG="${{ steps.release.outputs.tag }}"
+          VERSION="${{ steps.release.outputs.version }}"
+          DOWNLOAD_URL="https://github.com/$REPO/releases/download/$TAG/enhanced-server-sorter.zip"
+
+          jq --arg version "$VERSION" '.version = $version' plugin.json > plugin.json.tmp
+          mv plugin.json.tmp plugin.json
+
+          cat > update.json << EOF
+          {
+            "*": {
+              "version": "$VERSION",
+              "download_url": "$DOWNLOAD_URL"
+            }
+          }
+          EOF
+
+      - name: Commit and push metadata to default branch
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add plugin.json update.json
+
+          if git diff --staged --quiet; then
+            echo "No metadata changes to commit"
+          else
+            git commit -m "Update release metadata to version ${{ steps.release.outputs.version }}"
+            git pull --rebase origin "${DEFAULT_BRANCH}"
+            git push origin "HEAD:${DEFAULT_BRANCH}"
+          fi
+
+      - name: Verify default branch versions before packaging
+        run: |
+          VERSION="${{ steps.release.outputs.version }}"
+          git fetch origin "${DEFAULT_BRANCH}"
+
+          MAIN_PLUGIN_VERSION="$(git show "origin/${DEFAULT_BRANCH}:plugin.json" | jq -r '.version')"
+          MAIN_UPDATE_VERSION="$(git show "origin/${DEFAULT_BRANCH}:update.json" | jq -r '.["*"].version')"
+
+          echo "main plugin.json version: $MAIN_PLUGIN_VERSION"
+          echo "main update.json version: $MAIN_UPDATE_VERSION"
+
+          test "$MAIN_PLUGIN_VERSION" = "$VERSION"
+          test "$MAIN_UPDATE_VERSION" = "$VERSION"
+
+      - name: Reset workspace to updated default branch
+        run: |
+          git checkout "${DEFAULT_BRANCH}"
+          git reset --hard "origin/${DEFAULT_BRANCH}"
+
+      - name: Create enhanced-server-sorter directory structure
+        run: |
+          mkdir -p enhanced-server-sorter
+          rsync -av --exclude='.git' --exclude='enhanced-server-sorter' ./ enhanced-server-sorter/
+
+      - name: Create zip archive
+        run: zip -r enhanced-server-sorter.zip enhanced-server-sorter/
+
+      - name: Verify package archive
+        run: ls -lah enhanced-server-sorter.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: enhanced-server-sorter
+          path: enhanced-server-sorter.zip
+
+      - name: Upload zip to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh --version
+          gh release upload "${{ steps.release.outputs.tag }}" enhanced-server-sorter.zip --repo "${{ github.repository }}" --clobber
