@@ -34,4 +34,4 @@ After installation, access the folder management interface from the admin panel 
 
 ## Author
 
-Made by **olivierdti**
+Made by **olivierdti** maintained by Pelican Plugins Community
