@@ -1,18 +1,18 @@
 {
-    "id": "enhanced-server-sorter",
-    "name": "Enhanced Server Sorter",
-    "author": "Olivier D.",
-    "version": "1.3.0",
-    "description": "Organize servers into per-user folders and group them on the server list.",
-    "category": "plugin",
-    "url": "https://github.com/pelican-plugins-community/enhanced-server-sorter",
-    "update_url": null,
-    "namespace": "Olivier\\EnhancedServerSorter",
-    "class": "EnhancedServerSorterPlugin",
-    "panels": [
-        "admin",
-        "app"
-    ],
-    "panel_version": null,
-    "composer_packages": null
+  "id": "enhanced-server-sorter",
+  "name": "Enhanced Server Sorter",
+  "author": "Olivier D.",
+  "version": "1.3.0",
+  "description": "Organize servers into per-user folders and group them on the server list.",
+  "category": "plugin",
+  "url": "https://github.com/pelican-plugins-community/enhanced-server-sorter",
+  "update_url": null,
+  "namespace": "Olivier\\EnhancedServerSorter",
+  "class": "EnhancedServerSorterPlugin",
+  "panels": [
+    "admin",
+    "app"
+  ],
+  "panel_version": null,
+  "composer_packages": null
 }
